@@ -166,6 +166,10 @@ namespace Endjin.Editor.Model {
             let startIndex = normalizedSelection.selectionStart.index;
             let endIndex = normalizedSelection.selectionEnd.index;
 
+            // These parents must be non-null
+            let startTextModelParent = <IModel>startTextModel.parent;
+            let endTextModelParent = <IModel>endTextModel.parent;
+
             if (startTextModel === endTextModel) {
                 return startTextModel.removeRange(startIndex, endIndex);
             }
@@ -190,6 +194,28 @@ namespace Endjin.Editor.Model {
 
             // Coalesce the bit we want from the end with the start text
             startTextModel.acceptChild(startTextModel.textRun.length, endTextModel);
+
+            if (startTextModelParent !== endTextModelParent) {
+                // Coalesce the phrasing content from the parent into it too
+                let currentCandidate: IModel | null = endTextModelParent;
+                while (currentCandidate !== null && currentCandidate.contentType.lastIndexOf(CommonModelTypes.PhrasingContent, 0) > -1) {
+                    currentCandidate = currentCandidate.parent;
+                }
+
+                if (currentCandidate !== null && currentCandidate !== startTextModelParent) {
+                    let removedItems = currentCandidate.removeRange(0, currentCandidate.childCount - 1);
+                    let insertionIndex = startTextModelParent.getIndex(startTextModel) + 1;
+                    for (let i = 0; i < removedItems.length; ++i) {
+                        startTextModelParent.acceptChild(insertionIndex++, removedItems[i]);
+                    }
+                    // Now, remove the "now empty" element
+                    // The parent must be a model, cannot be null
+                    let currentCandidateParent = <IModel>currentCandidate.parent;
+                    let indexToRemove = currentCandidateParent.getIndex(currentCandidate);
+                    currentCandidateParent.removeChildAtIndex(indexToRemove);
+                    removedModels.push(currentCandidate);
+                }
+            }
 
             return removedModels;
         }

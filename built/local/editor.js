@@ -846,6 +846,8 @@ var Endjin;
                     var endTextModel = normalizedSelection.selectionEnd.model;
                     var startIndex = normalizedSelection.selectionStart.index;
                     var endIndex = normalizedSelection.selectionEnd.index;
+                    var startTextModelParent = startTextModel.parent;
+                    var endTextModelParent = endTextModel.parent;
                     if (startTextModel === endTextModel) {
                         return startTextModel.removeRange(startIndex, endIndex);
                     }
@@ -861,6 +863,23 @@ var Endjin;
                         currentModel = previousModelInTree;
                     }
                     startTextModel.acceptChild(startTextModel.textRun.length, endTextModel);
+                    if (startTextModelParent !== endTextModelParent) {
+                        var currentCandidate = endTextModelParent;
+                        while (currentCandidate !== null && currentCandidate.contentType.lastIndexOf(Model.CommonModelTypes.PhrasingContent, 0) > -1) {
+                            currentCandidate = currentCandidate.parent;
+                        }
+                        if (currentCandidate !== null && currentCandidate !== startTextModelParent) {
+                            var removedItems = currentCandidate.removeRange(0, currentCandidate.childCount - 1);
+                            var insertionIndex = startTextModelParent.getIndex(startTextModel) + 1;
+                            for (var i = 0; i < removedItems.length; ++i) {
+                                startTextModelParent.acceptChild(insertionIndex++, removedItems[i]);
+                            }
+                            var currentCandidateParent = currentCandidate.parent;
+                            var indexToRemove = currentCandidateParent.getIndex(currentCandidate);
+                            currentCandidateParent.removeChildAtIndex(indexToRemove);
+                            removedModels.push(currentCandidate);
+                        }
+                    }
                     return removedModels;
                 };
                 ChildContentModelBase.prototype.canAccept = function (index, child) {
