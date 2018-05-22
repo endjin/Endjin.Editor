@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/.bin/cucumber-js -r Scripts/Helpers/*.js -r ../built/local/editor.js -r Scripts/Steps/*.js Scripts/Features"
+    "test": "./node_modules/.bin/cucumber-js -r Scripts/Helpers/*.js -r ../built/local/editor.js -r Scripts/Steps/**/*.js Scripts/Features"
   },
   "author": "",
   "license": "ISC",
