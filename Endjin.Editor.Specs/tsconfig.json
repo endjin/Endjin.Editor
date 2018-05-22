@@ -3,17 +3,16 @@
   "compilerOptions": {
     "target": "es5",
     "declaration": true,
-    "module": "none",
+    "module": "umd",
     "strictNullChecks": true,
     "noImplicitAny": true,
     "removeComments": true,
     "preserveConstEnums": true,
-    "outFile": "../built/local/editor.js",
     "sourceMap": true,
     "lib": [ "dom", "es5", "scripthost", "es2015.collection" ]
   },
   "include": [
-    "Scripts/**/*"
+    "Scripts/**/*.ts"
   ],
   "exclude": [
     "node_modules",

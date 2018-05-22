@@ -1,0 +1,16 @@
+{
+  "name": "endjin.editor.specs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "./node_modules/.bin/cucumber-js -r Scripts/Helpers/*.js -r ../built/local/editor.js -r Scripts/Steps/*.js Scripts/Features"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/cucumber": "^4.0.4",
+    "@types/node": "^10.1.2",
+    "cucumber": "^4.2.1"
+  }
+}

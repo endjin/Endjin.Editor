@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27428.2037
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Endjin.Editor", "Endjin.Editor\Endjin.Editor.csproj", "{8A903AE8-E1C8-45F1-BAA8-4AABA73B87F9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Endjin.Editor", "Endjin.Editor\Endjin.Editor.csproj", "{8A903AE8-E1C8-45F1-BAA8-4AABA73B87F9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Endjin.Editor.Specs", "Endjin.Editor.Specs\Endjin.Editor.Specs.csproj", "{AAEDE82A-643F-40DB-9D74-26F3987A41C9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{8A903AE8-E1C8-45F1-BAA8-4AABA73B87F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8A903AE8-E1C8-45F1-BAA8-4AABA73B87F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8A903AE8-E1C8-45F1-BAA8-4AABA73B87F9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AAEDE82A-643F-40DB-9D74-26F3987A41C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AAEDE82A-643F-40DB-9D74-26F3987A41C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AAEDE82A-643F-40DB-9D74-26F3987A41C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AAEDE82A-643F-40DB-9D74-26F3987A41C9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
