@@ -1,40 +1,45 @@
 ﻿/// <reference path="../../../../../../../built/local/editor.d.ts" />
 /// <reference path="../../../../../Helpers/loadScript.ts" />
 
-import { Given, When, Then, World } from "cucumber";
+import { Given, When, Then, World, setWorldConstructor } from "cucumber";
 import { loadScript } from "../../../../../Helpers/loadScript";
 import * as assert from "assert";
 
 loadScript("../built/local/editor.js");
 
-interface State extends World {
+class State implements World {
     models: Map<string, Endjin.Editor.Model.IModel>;
+    result: Selection | null;
+
+    constructor() {
+        this.models = new Map<string, Endjin.Editor.Model.IModel>();
+        this.result = null;
+    }
 }
 
-export function World(callback: (w: World) => void) {
-    let world: State = {
-        models = new Map<string, Endjin.Editor.Model.IModel>();
-    };
+setWorldConstructor(State);
 
-    callback(world);
-}
-
-Given('I have an AnchorModel called {string}', (name: string): string => {
-    // Write code here that turns the phrase above into concrete actions
-    return 'pending';
+Given('I have an AnchorModel called {string}', function(name: string): void {
+    let newModel = new Endjin.Editor.Model.AnchorModel();
+    this.models.set(name, newModel);
 });
 
-When('I add {string} to {string}', (name1: string, name2: string): string => {
-    // Write code here that turns the phrase above into concrete actions
-    return 'pending';
+When('I add {string} to {string}', function(name1: string, name2: string): void {
+    let model1 = this.models.get(name1);
+    let model2 = this.models.get(name2);
+
+    this.result = model2.acceptChild(0, model1);
 });
 
-Then('the result should be {result}', (result: string): string => {
-    // Write code here that turns the phrase above into concrete actions
-    return 'pending';
+Then('the result should be null', function(): void {
+    assert.strictEqual(this.result, null);
 });
 
-Then('{name1} should not contain {name2}', (name1: string, name2: string): string => {
-    // Write code here that turns the phrase above into concrete actions
-    return 'pending';
+Then('{string} should not contain {string}', function(name1: string, name2: string): void {
+    let model1 = this.models.get(name1);
+    let model2 = this.models.get(name2);
+
+    let i = model1.getIndex(model2);
+
+    assert.strictEqual(i, -1);
 });

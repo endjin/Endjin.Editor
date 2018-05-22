@@ -8,5 +8,5 @@ Scenario: Adding an AnchorModel to an AnchorModel
 	Given I have an AnchorModel called "first"
 	And I have an AnchorModel called "second"
 	When I add "second" to "first"
-	Then the result should be "false"
+	Then the result should be null
 	And "first" should not contain "second"
