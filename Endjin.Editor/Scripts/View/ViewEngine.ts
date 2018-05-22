@@ -92,7 +92,9 @@ namespace Endjin.Editor.View {
                 let viewAdapter = this.getViewAdapterForModel(model);
                 view = viewAdapter.render(model, <HTMLElement>existingView);
                 if (model.isEditable) {
-                    (<HTMLElement>view).removeAttribute("contenteditable");
+                    if (model !== this.editor.document.root) {
+                        (<HTMLElement>view).removeAttribute("contenteditable");
+                    }
                 } else {
                     (<HTMLElement>view).contentEditable = "false";
                 }

@@ -17,7 +17,7 @@ namespace Endjin.Editor.Model {
      * Only changes are rendered allowing updates to be relatively efficient.
      * 
      * The model isn't manipulated directly, but through IModelCommands which themselves call on the
-     * model's methods. The Model can registed event handlers on the model side, through the ModelEngine
+     * model's methods. The Model can register event handlers on the model side, through the ModelEngine
      * and execute, enable or disable commands accordingly.
      * 
      * These commands are batched through a command handler which makes merging the event stream, winding back

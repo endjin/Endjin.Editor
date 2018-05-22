@@ -352,7 +352,9 @@ var Endjin;
                         var viewAdapter = this.getViewAdapterForModel(model);
                         view = viewAdapter.render(model, existingView);
                         if (model.isEditable) {
-                            view.removeAttribute("contenteditable");
+                            if (model !== this.editor.document.root) {
+                                view.removeAttribute("contenteditable");
+                            }
                         }
                         else {
                             view.contentEditable = "false";
@@ -8500,7 +8502,7 @@ var Endjin;
             var view = wrapper.firstElementChild;
             parent.innerHTML = "";
             parent.appendChild(view);
-            return new EditorImplementation(view);
+            return new EditorImplementation(parent);
         }
         Editor.createAndInsert = createAndInsert;
         function create(id) {

@@ -155,7 +155,7 @@ namespace Endjin.Editor {
         parent.appendChild(view);
 
 
-        return new EditorImplementation(view);
+        return new EditorImplementation(parent);
     }
 
     /**
