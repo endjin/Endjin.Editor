@@ -1,22 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Update="Scripts\Steps\Model\Models\PhrasingContent\AnchorModel\AcceptChild.feature.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>AcceptChild.feature</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Scripts\Steps\Model\Models\PhrasingContent\AnchorModel\AcceptChild.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
-      <LastGenOutput>AcceptChild.feature.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
 
 </Project>
