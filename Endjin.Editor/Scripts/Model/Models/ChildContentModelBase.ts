@@ -171,14 +171,15 @@ namespace Endjin.Editor.Model {
             let endTextModelParent = <IModel>endTextModel.parent;
 
             if (startTextModel === endTextModel) {
-                return startTextModel.removeRange(startIndex, endIndex);
+                startTextModel.removeRange(startIndex, endIndex);
+            } else {
+                // Delete the range in the start model
+                removedModels.push(...startTextModel.removeRange(startIndex, startTextModel.textRun.length - 1));
+                // Delete the range in the end model, however, we don't need to dispose of tis
+                endTextModel.removeRange(0, endIndex - 1);
+                // Coalesce the bit we want from the end with the start text
+                startTextModel.acceptChild(startTextModel.textRun.length, endTextModel);
             }
-
-            // Delete the range in the start model
-            removedModels.push(...startTextModel.removeRange(startIndex, startTextModel.textRun.length - 1));
-
-            // Delete the range in the end model, however, we don't need to dispose of tis
-            endTextModel.removeRange(0, endIndex - 1);
 
             // Now walk up the tree to the common ancestor, removing the nodes as we go
             let currentModel: IModel | null = endTextModel;
@@ -192,9 +193,6 @@ namespace Endjin.Editor.Model {
                 currentModel = previousModelInTree;
             }
 
-            // Coalesce the bit we want from the end with the start text
-            startTextModel.acceptChild(startTextModel.textRun.length, endTextModel);
-
             if (startTextModelParent !== endTextModelParent) {
                 // Coalesce the phrasing content from the parent into it too
                 let currentCandidate: IModel | null = endTextModelParent;
@@ -206,14 +204,15 @@ namespace Endjin.Editor.Model {
                     let removedItems = currentCandidate.removeRange(0, currentCandidate.childCount - 1);
                     let insertionIndex = startTextModelParent.getIndex(startTextModel) + 1;
                     for (let i = 0; i < removedItems.length; ++i) {
-                        startTextModelParent.acceptChild(insertionIndex++, removedItems[i]);
+                        if (startTextModelParent.acceptChild(insertionIndex++, removedItems[i]) === null) {
+                            // if we couldn't add it, we need to add it to the list of removed items to be destroyed
+                            removedModels.push(removedItems[i]);
+                        }
                     }
                     // Now, remove the "now empty" element
                     // The parent must be a model, cannot be null
-                    let currentCandidateParent = <IModel>currentCandidate.parent;
-                    let indexToRemove = currentCandidateParent.getIndex(currentCandidate);
-                    currentCandidateParent.removeChildAtIndex(indexToRemove);
                     removedModels.push(currentCandidate);
+                    removeChildFromParent(currentCandidate);
                 }
             }
 

@@ -53,16 +53,15 @@ namespace Endjin.Editor.Model {
         canRemoveSelection(selection: Selection): boolean {
             let normalizedSelection = selection.normalize();
             let startIndex = normalizedSelection.selectionStart.model === this ? normalizedSelection.selectionStart.index : 0;
-            let endIndex = normalizedSelection.selectionEnd.model === this ? normalizedSelection.selectionEnd.index : this.textRun.length - 1;
-            return this.canRemoveRange(startIndex, endIndex);
+            let endIndex = normalizedSelection.selectionEnd.model === this ? normalizedSelection.selectionEnd.index : this.textRun.length;
+            return this.canRemoveRange(startIndex, endIndex - 1);
         }
 
         removeSelection(selection: Selection): Array<IModel> {
             let normalizedSelection = selection.normalize();
             let startIndex = normalizedSelection.selectionStart.model === this ? normalizedSelection.selectionStart.index : 0;
-            let endIndex = normalizedSelection.selectionEnd.model === this ? normalizedSelection.selectionEnd.index : this.textRun.length - 1;
-
-            return this.removeRange(startIndex, endIndex);
+            let endIndex = normalizedSelection.selectionEnd.model === this ? normalizedSelection.selectionEnd.index : this.textRun.length;
+            return this.removeRange(startIndex, endIndex - 1);
         }
     }
 }

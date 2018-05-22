@@ -268,14 +268,14 @@ var Endjin;
                 TextModel.prototype.canRemoveSelection = function (selection) {
                     var normalizedSelection = selection.normalize();
                     var startIndex = normalizedSelection.selectionStart.model === this ? normalizedSelection.selectionStart.index : 0;
-                    var endIndex = normalizedSelection.selectionEnd.model === this ? normalizedSelection.selectionEnd.index : this.textRun.length - 1;
-                    return this.canRemoveRange(startIndex, endIndex);
+                    var endIndex = normalizedSelection.selectionEnd.model === this ? normalizedSelection.selectionEnd.index : this.textRun.length;
+                    return this.canRemoveRange(startIndex, endIndex - 1);
                 };
                 TextModel.prototype.removeSelection = function (selection) {
                     var normalizedSelection = selection.normalize();
                     var startIndex = normalizedSelection.selectionStart.model === this ? normalizedSelection.selectionStart.index : 0;
-                    var endIndex = normalizedSelection.selectionEnd.model === this ? normalizedSelection.selectionEnd.index : this.textRun.length - 1;
-                    return this.removeRange(startIndex, endIndex);
+                    var endIndex = normalizedSelection.selectionEnd.model === this ? normalizedSelection.selectionEnd.index : this.textRun.length;
+                    return this.removeRange(startIndex, endIndex - 1);
                 };
                 TextModel.ContentType = Model.CommonModelTypes.PhrasingContent + ".text";
                 return TextModel;
@@ -849,10 +849,13 @@ var Endjin;
                     var startTextModelParent = startTextModel.parent;
                     var endTextModelParent = endTextModel.parent;
                     if (startTextModel === endTextModel) {
-                        return startTextModel.removeRange(startIndex, endIndex);
+                        startTextModel.removeRange(startIndex, endIndex);
                     }
-                    removedModels.push.apply(removedModels, startTextModel.removeRange(startIndex, startTextModel.textRun.length - 1));
-                    endTextModel.removeRange(0, endIndex - 1);
+                    else {
+                        removedModels.push.apply(removedModels, startTextModel.removeRange(startIndex, startTextModel.textRun.length - 1));
+                        endTextModel.removeRange(0, endIndex - 1);
+                        startTextModel.acceptChild(startTextModel.textRun.length, endTextModel);
+                    }
                     var currentModel = endTextModel;
                     while (currentModel !== null && currentModel !== this && currentModel.parent !== null && currentModel !== startTextModel) {
                         var previousModelInTree = Model.getPreviousModel(currentModel);
@@ -862,7 +865,6 @@ var Endjin;
                         }
                         currentModel = previousModelInTree;
                     }
-                    startTextModel.acceptChild(startTextModel.textRun.length, endTextModel);
                     if (startTextModelParent !== endTextModelParent) {
                         var currentCandidate = endTextModelParent;
                         while (currentCandidate !== null && currentCandidate.contentType.lastIndexOf(Model.CommonModelTypes.PhrasingContent, 0) > -1) {
@@ -872,12 +874,12 @@ var Endjin;
                             var removedItems = currentCandidate.removeRange(0, currentCandidate.childCount - 1);
                             var insertionIndex = startTextModelParent.getIndex(startTextModel) + 1;
                             for (var i = 0; i < removedItems.length; ++i) {
-                                startTextModelParent.acceptChild(insertionIndex++, removedItems[i]);
+                                if (startTextModelParent.acceptChild(insertionIndex++, removedItems[i]) === null) {
+                                    removedModels.push(removedItems[i]);
+                                }
                             }
-                            var currentCandidateParent = currentCandidate.parent;
-                            var indexToRemove = currentCandidateParent.getIndex(currentCandidate);
-                            currentCandidateParent.removeChildAtIndex(indexToRemove);
                             removedModels.push(currentCandidate);
+                            Model.removeChildFromParent(currentCandidate);
                         }
                     }
                     return removedModels;
