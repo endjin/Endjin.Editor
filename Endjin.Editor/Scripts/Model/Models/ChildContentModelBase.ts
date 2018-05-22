@@ -69,7 +69,6 @@ namespace Endjin.Editor.Model {
                 return null;
             }
 
-            // TODO: Coalesce TextModel nodes here if we can
             if (index == this.children.length) {
                 this.children.push(child);
             }

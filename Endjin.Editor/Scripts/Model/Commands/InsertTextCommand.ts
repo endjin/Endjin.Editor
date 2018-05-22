@@ -37,9 +37,13 @@ namespace Endjin.Editor.Model {
                 }
             }
             else {
-                this.selection.selectionScope.removeSelection(this.selection);
+
+                let deletedModels = this.selection.selectionScope.removeSelection(this.selection);
                 insertedSelection = this.selection.selectionStart.model.acceptChild(this.selection.selectionStart.index, new TextModel(this.textRun));
                 affectedModels.push(this.selection.selectionScope);
+                // We are actually done with these models, so tell the editor that.
+                this.editor.destroyModels(...deletedModels);
+
             }
 
             if (insertedSelection !== null) {

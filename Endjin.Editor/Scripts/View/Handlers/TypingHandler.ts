@@ -37,10 +37,12 @@ namespace Endjin.Editor.View {
 
                 if (e.keyCode === 8) {
                     this.editor.executeCommand(new Model.BackspaceCommand(this.editor, this.editor.selection));
+                    return;
                 }
 
                 if (e.keyCode === 46) {
                     this.editor.executeCommand(new Model.DeleteCommand(this.editor, this.editor.selection));
+                    return;
                 }
 
                 if (e.keyCode === 9 || e.keyCode === 27) {

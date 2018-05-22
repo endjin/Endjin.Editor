@@ -21,10 +21,9 @@ namespace Endjin.Editor.Model {
                 return false;
             }
 
-            // Given that we are ok with removing that, can we accept a newline at that point?
-            let collapsedSelection = this.selection.collapseToStart();
+            // TODO: validate we can execute the newline
 
-            return collapsedSelection.selectionScope.canSplit(collapsedSelection);
+            return true;
         }
 
         execute(): IModel[] {
@@ -40,9 +39,8 @@ namespace Endjin.Editor.Model {
             // We are actually done with these models, so tell the editor that.
             this.editor.destroyModels(...deletedModels);
 
-            let collapsedSelection = this.selection.collapseToStart();
-
-            return collapsedSelection.selectionScope.split(collapsedSelection);
+            // TODO: actually execute the newline
+            return [this.selection.selectionScope];
         }
 
         undo(): IModel[] {

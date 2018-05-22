@@ -12,11 +12,39 @@ namespace Endjin.Editor.Model {
         constructor(private editor: IEditor, private selection: Selection | null) { }
 
         canExecute(): boolean {
-            return false;
+            if (this.selection === null) {
+                return false;
+            }
+
+            // Is the selection scope OK with removing this selection?
+            if (!this.selection.selectionScope.canRemoveSelection(this.selection)) {
+                return false;
+            }
+
+            // TODO: validate we can execute the delete
+
+            return true;
         }
 
         execute(): IModel[] {
-            return [];
+            if (!this.canExecute()) {
+                return [];
+            }
+
+            if (this.selection === null) {
+                return [];
+            }
+
+            let normalizedSelection = this.selection.normalize();
+
+            let deletedModels: Array<IModel> = this.selection.selectionScope.removeSelection(this.selection);
+            // We are actually done with these models, so tell the editor that.
+            this.editor.destroyModels(...deletedModels);
+
+            this.editor.selection = normalizedSelection.collapseToStart();
+
+            // TODO: actually execute the delete
+            return [this.selection.selectionScope];
         }
 
         undo(): IModel[] {

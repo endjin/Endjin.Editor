@@ -8141,10 +8141,28 @@ var Endjin;
                     this.commandType = "application/vnd.endjin.editor.documentcommand.backspace";
                 }
                 BackspaceCommand.prototype.canExecute = function () {
-                    return false;
+                    if (this.selection === null) {
+                        return false;
+                    }
+                    if (!this.selection.selectionScope.canRemoveSelection(this.selection)) {
+                        return false;
+                    }
+                    return true;
                 };
                 BackspaceCommand.prototype.execute = function () {
-                    return [];
+                    if (!this.canExecute()) {
+                        return [];
+                    }
+                    if (this.selection === null) {
+                        return [];
+                    }
+                    var normalizedSelection = this.selection.normalize();
+                    var deletedModels = this.selection.selectionScope.removeSelection(this.selection);
+                    (_a = this.editor).destroyModels.apply(_a, deletedModels);
+                    var collapsedSelection = normalizedSelection.collapseToStart();
+                    this.editor.selection = collapsedSelection;
+                    return [this.selection.selectionScope];
+                    var _a;
                 };
                 BackspaceCommand.prototype.undo = function () {
                     return [];
@@ -8174,8 +8192,7 @@ var Endjin;
                     if (!this.selection.selectionScope.canRemoveSelection(this.selection)) {
                         return false;
                     }
-                    var collapsedSelection = this.selection.collapseToStart();
-                    return collapsedSelection.selectionScope.canSplit(collapsedSelection);
+                    return true;
                 };
                 NewlineCommand.prototype.execute = function () {
                     if (!this.canExecute()) {
@@ -8186,8 +8203,7 @@ var Endjin;
                     }
                     var deletedModels = this.selection.selectionScope.removeSelection(this.selection);
                     (_a = this.editor).destroyModels.apply(_a, deletedModels);
-                    var collapsedSelection = this.selection.collapseToStart();
-                    return collapsedSelection.selectionScope.split(collapsedSelection);
+                    return [this.selection.selectionScope];
                     var _a;
                 };
                 NewlineCommand.prototype.undo = function () {
@@ -8212,10 +8228,27 @@ var Endjin;
                     this.commandType = "application/vnd.endjin.editor.documentcommand.delete";
                 }
                 DeleteCommand.prototype.canExecute = function () {
-                    return false;
+                    if (this.selection === null) {
+                        return false;
+                    }
+                    if (!this.selection.selectionScope.canRemoveSelection(this.selection)) {
+                        return false;
+                    }
+                    return true;
                 };
                 DeleteCommand.prototype.execute = function () {
-                    return [];
+                    if (!this.canExecute()) {
+                        return [];
+                    }
+                    if (this.selection === null) {
+                        return [];
+                    }
+                    var normalizedSelection = this.selection.normalize();
+                    var deletedModels = this.selection.selectionScope.removeSelection(this.selection);
+                    (_a = this.editor).destroyModels.apply(_a, deletedModels);
+                    this.editor.selection = normalizedSelection.collapseToStart();
+                    return [this.selection.selectionScope];
+                    var _a;
                 };
                 DeleteCommand.prototype.undo = function () {
                     return [];
@@ -8259,14 +8292,16 @@ var Endjin;
                         }
                     }
                     else {
-                        this.selection.selectionScope.removeSelection(this.selection);
+                        var deletedModels = this.selection.selectionScope.removeSelection(this.selection);
                         insertedSelection = this.selection.selectionStart.model.acceptChild(this.selection.selectionStart.index, new Model.TextModel(this.textRun));
                         affectedModels.push(this.selection.selectionScope);
+                        (_a = this.editor).destroyModels.apply(_a, deletedModels);
                     }
                     if (insertedSelection !== null) {
                         this.editor.selection = new Model.Selection(insertedSelection.selectionScope, insertedSelection.selectionEnd, insertedSelection.selectionEnd);
                     }
                     return affectedModels;
+                    var _a;
                 };
                 InsertTextCommand.prototype.undo = function () {
                     throw new Error("Not implemented.");
@@ -8305,9 +8340,11 @@ var Endjin;
                         }
                         if (e.keyCode === 8) {
                             _this.editor.executeCommand(new Editor.Model.BackspaceCommand(_this.editor, _this.editor.selection));
+                            return;
                         }
                         if (e.keyCode === 46) {
                             _this.editor.executeCommand(new Editor.Model.DeleteCommand(_this.editor, _this.editor.selection));
+                            return;
                         }
                         if (e.keyCode === 9 || e.keyCode === 27) {
                             return;
