@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+        <link href="https://endjin.com/Content/css?v=PgcM1Z97pyOzW7w40IdRM5Rd4mDHJEnQVZq157N7T-s1" rel="stylesheet"/>
+    </head>
+    <body>
+        <div id="editorContainer">
+            <div class="row">
+                <div class="col-sm-3">
+                    <header class="header-nav">
+                        <a href="/" class="main-logo-link">
+                            endjin - Home
+                        </a>
+            
+                        <nav class="main-nav">
+                            <ul itemscope itemtype="http://www.schema.org/SiteNavigationElement">
+                                <li itemprop="name"><a itemprop="url" href="/services">Services</a></li>
+                                <li itemprop="name"><a itemprop="url" href="/industries">Industries</a></li>
+                                <li itemprop="name"><a itemprop="url" href="/solutions">Solutions</a></li>
+                                <li itemprop="name"><a itemprop="url" href="/customers">Customers</a></li>
+                                <li itemprop="name"><a itemprop="url" href="/products">Products</a></li>
+                                <li itemprop="name"><a itemprop="url" href="/academy">Academy</a></li>
+                                <li itemprop="name"><a itemprop="url" href="/incubator">Incubator</a></li>
+                                <li itemprop="name"><a itemprop="url" href="https://blogs.endjin.com">Blogs</a></li>
+                                <li itemprop="name" class="contact-us-item"><a itemprop="url" href="/contact-us">Contact Us</a></li>
+                            </ul>
+                        </nav>
+                    </header>
+                </div>
+            
+                <section class="col-sm-9">
+                    <section class="home-intro">
+                        <h1><em>Accelerating</em> your journey to <em>Digital Transformation</em>.</h1>
+                    </section>
+                    <h2>
+                        Whether you're motivated by a change in <em>organizational strategy</em>, improving
+                        <em>governance</em>, adopting <em>DevOps</em>, or transforming your <em>people</em>,
+                        the end <em>goal</em> is often the same; the desire to become a
+                        <em>modern</em>, efficient, <em>data-driven</em>, secure, <em>cloud-first</em> organization.
+                    </h2>
+                </section>
+            </div>
+        </div>
+        <div>
+            <p>This bit is not for editing</p>
+        </div>
+        <div id="secondEditorContainer">
+            <p>Here&apos;s a paragraph</p>
+            <p>Here&apos;s another paragraph</p>
+        </div>
+        <button onclick="toggleEditing()">Toggle editing</button>
+        
+        <script src="Endjin.Editor/node_modules/rx/dist/rx.lite.js"></script> 
+        <script src="built/local/editor.js"></script>
+        
+        <script>
+        var editor = null;
+        var editor2 = null;
+        function toggleEditing() {
+            if (editor === null) {
+                editor = Endjin.Editor.create("editorContainer");
+                editor2 = Endjin.Editor.create("secondEditorContainer");
+            } else {
+                editor.destroy();
+                editor2.destroy();  
+                editor = null;
+                editor2 = null;          
+            }
+        }
+        </script>
+    </body>
+</html>
