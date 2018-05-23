@@ -857,7 +857,8 @@ var Endjin;
                         startTextModel.acceptChild(startTextModel.textRun.length, endTextModel);
                     }
                     var currentModel = endTextModel;
-                    while (currentModel !== null && currentModel !== this && currentModel.parent !== null && currentModel !== startTextModel) {
+                    while (currentModel !== null && currentModel !== this &&
+                        currentModel.parent !== null && currentModel !== startTextModel) {
                         var previousModelInTree = Model.getPreviousModel(currentModel);
                         if (currentModel.childCount === 0) {
                             removedModels.push(currentModel);
@@ -8299,6 +8300,7 @@ var Endjin;
                         (_a = this.editor).destroyModels.apply(_a, deletedModels);
                     }
                     if (insertedSelection !== null) {
+                        Model.normalizeTextNodes(this.selection.selectionEnd.model);
                         this.editor.selection = new Model.Selection(insertedSelection.selectionScope, insertedSelection.selectionEnd, insertedSelection.selectionEnd);
                     }
                     return affectedModels;

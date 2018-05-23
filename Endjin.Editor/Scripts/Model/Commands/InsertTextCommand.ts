@@ -47,6 +47,7 @@ namespace Endjin.Editor.Model {
             }
 
             if (insertedSelection !== null) {
+                normalizeTextNodes(this.selection.selectionEnd.model);
                 this.editor.selection = new Selection(insertedSelection.selectionScope, insertedSelection.selectionEnd, insertedSelection.selectionEnd);
             } 
             return affectedModels;

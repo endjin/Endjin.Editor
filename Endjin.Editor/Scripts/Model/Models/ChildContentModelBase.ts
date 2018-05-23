@@ -183,7 +183,8 @@ namespace Endjin.Editor.Model {
             // Now walk up the tree to the common ancestor, removing the nodes as we go
             let currentModel: IModel | null = endTextModel;
 
-            while (currentModel !== null && currentModel !== this && currentModel.parent !== null && currentModel !== startTextModel) {
+            while (currentModel !== null && currentModel !== this &&
+                currentModel.parent !== null && currentModel !== startTextModel) {
                 let previousModelInTree = getPreviousModel(currentModel);
                 if (currentModel.childCount === 0) {
                     removedModels.push(currentModel);
