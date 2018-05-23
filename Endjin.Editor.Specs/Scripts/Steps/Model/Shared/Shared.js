@@ -11,8 +11,8 @@
     Object.defineProperty(exports, "__esModule", { value: true });
     var cucumber_1 = require("cucumber");
     var assert = require("assert");
-    cucumber_1.Given('I have an AnchorModel called {string}', function (name) {
-        var newModel = new Endjin.Editor.Model.AnchorModel();
+    cucumber_1.Given('I have a model of type {string} called {string}', function (modelType, name) {
+        var newModel = new Endjin.Editor.Model[modelType]();
         this.models.set(name, newModel);
     });
     cucumber_1.When('I add {string} to {string}', function (name1, name2) {
@@ -23,11 +23,20 @@
     cucumber_1.Then('the result should be null', function () {
         assert.strictEqual(this.result, null);
     });
+    cucumber_1.Then('the result should be a Selection', function () {
+        assert.ok(this.result instanceof Endjin.Editor.Model.Selection);
+    });
     cucumber_1.Then('{string} should not contain {string}', function (name1, name2) {
         var model1 = this.models.get(name1);
         var model2 = this.models.get(name2);
         var i = model1.getIndex(model2);
         assert.strictEqual(i, -1);
     });
+    cucumber_1.Then('{string} should contain {string}', function (name1, name2) {
+        var model1 = this.models.get(name1);
+        var model2 = this.models.get(name2);
+        var i = model1.getIndex(model2);
+        assert.notStrictEqual(i, -1);
+    });
 });
-//# sourceMappingURL=AcceptChild.js.map
+//# sourceMappingURL=Shared.js.map
