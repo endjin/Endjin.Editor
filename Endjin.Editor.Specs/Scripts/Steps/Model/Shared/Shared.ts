@@ -5,7 +5,7 @@ import * as assert from "assert";
 import { State } from "../../Shared/State";
 
 Given('I have a model of type {string} called {string}', function (this: State, modelType: string, name: string): void {
-    let newModel = new (<any>Endjin.Editor.Model)[modelType]() as Endjin.Editor.Model.IModel;
+    let newModel = new (<any>Endjin.Editor.Model)[modelType + 'Model']() as Endjin.Editor.Model.IModel;
     this.models.set(name, newModel);
 });
 

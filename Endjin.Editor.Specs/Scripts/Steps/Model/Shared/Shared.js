@@ -12,7 +12,7 @@
     var cucumber_1 = require("cucumber");
     var assert = require("assert");
     cucumber_1.Given('I have a model of type {string} called {string}', function (modelType, name) {
-        var newModel = new Endjin.Editor.Model[modelType]();
+        var newModel = new Endjin.Editor.Model[modelType + 'Model']();
         this.models.set(name, newModel);
     });
     cucumber_1.When('I add {string} to {string}', function (name1, name2) {
