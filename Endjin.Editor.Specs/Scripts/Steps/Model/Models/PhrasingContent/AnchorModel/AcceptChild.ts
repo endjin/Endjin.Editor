@@ -1,23 +1,7 @@
 ﻿/// <reference path="../../../../../../../built/local/editor.d.ts" />
-/// <reference path="../../../../../Helpers/loadScript.ts" />
 
-import { Given, When, Then, World, setWorldConstructor } from "cucumber";
-import { loadScript } from "../../../../../Helpers/loadScript";
+import { Given, When, Then } from "cucumber";
 import * as assert from "assert";
-
-loadScript("../built/local/editor.js");
-
-class State implements World {
-    models: Map<string, Endjin.Editor.Model.IModel>;
-    result: Selection | null;
-
-    constructor() {
-        this.models = new Map<string, Endjin.Editor.Model.IModel>();
-        this.result = null;
-    }
-}
-
-setWorldConstructor(State);
 
 Given('I have an AnchorModel called {string}', function(name: string): void {
     let newModel = new Endjin.Editor.Model.AnchorModel();

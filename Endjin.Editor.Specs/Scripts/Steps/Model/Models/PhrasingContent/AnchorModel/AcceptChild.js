@@ -4,23 +4,13 @@
         if (v !== undefined) module.exports = v;
     }
     else if (typeof define === "function" && define.amd) {
-        define(["require", "exports", "cucumber", "../../../../../Helpers/loadScript", "assert"], factory);
+        define(["require", "exports", "cucumber", "assert"], factory);
     }
 })(function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var cucumber_1 = require("cucumber");
-    var loadScript_1 = require("../../../../../Helpers/loadScript");
     var assert = require("assert");
-    loadScript_1.loadScript("../built/local/editor.js");
-    var State = (function () {
-        function State() {
-            this.models = new Map();
-            this.result = null;
-        }
-        return State;
-    }());
-    cucumber_1.setWorldConstructor(State);
     cucumber_1.Given('I have an AnchorModel called {string}', function (name) {
         var newModel = new Endjin.Editor.Model.AnchorModel();
         this.models.set(name, newModel);
