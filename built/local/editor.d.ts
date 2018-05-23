@@ -2326,6 +2326,7 @@ declare namespace Endjin.Editor {
     function getEditorFor(element: HTMLElement): IEditor | null;
 }
 declare namespace Endjin.Editor.Model {
+    function normalizeTextNodes(model: IModel): void;
     function isModelElementBefore(f: IModel, s: IModel): boolean;
     function getNextModel(model: IModel): IModel | null;
     function getPreviousModel(model: IModel): IModel | null;

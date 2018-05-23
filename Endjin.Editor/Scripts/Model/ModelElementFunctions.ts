@@ -1,6 +1,26 @@
 ﻿/// <reference path="IModel.ts" />
 
 namespace Endjin.Editor.Model {
+    export function normalizeTextNodes(model: IModel): void {
+        let index = 0;
+        let currentTextNode: TextModel | null = null;
+        while (index < model.childCount) {
+            let child = model.getChildAtIndex(index);
+            if (child.contentType === TextModel.ContentType) {
+                if (currentTextNode === null) {
+                    currentTextNode = <TextModel>child;
+                    index++;
+                } else {
+                    currentTextNode.acceptChild(currentTextNode.textRun.length, child);
+                    model.removeChildAtIndex(index);
+                }
+            } else {
+                currentTextNode = null;
+                index++;
+            }
+        }
+    }
+
     export function isModelElementBefore(f: IModel, s: IModel): boolean {
         let first: IModel | null = f;
         let second: IModel | null = s;

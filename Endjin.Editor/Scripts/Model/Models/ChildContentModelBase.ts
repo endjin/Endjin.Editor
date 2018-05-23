@@ -208,6 +208,8 @@ namespace Endjin.Editor.Model {
                             removedModels.push(removedItems[i]);
                         }
                     }
+                    // get rid of adjacent Text node
+                    normalizeTextNodes(startTextModelParent);
                     // Now, remove the "now empty" element
                     // The parent must be a model, cannot be null
                     removedModels.push(currentCandidate);

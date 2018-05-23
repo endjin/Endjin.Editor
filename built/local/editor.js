@@ -878,6 +878,7 @@ var Endjin;
                                     removedModels.push(removedItems[i]);
                                 }
                             }
+                            Model.normalizeTextNodes(startTextModelParent);
                             removedModels.push(currentCandidate);
                             Model.removeChildFromParent(currentCandidate);
                         }
@@ -8597,6 +8598,28 @@ var Endjin;
     (function (Editor) {
         var Model;
         (function (Model) {
+            function normalizeTextNodes(model) {
+                var index = 0;
+                var currentTextNode = null;
+                while (index < model.childCount) {
+                    var child = model.getChildAtIndex(index);
+                    if (child.contentType === Model.TextModel.ContentType) {
+                        if (currentTextNode === null) {
+                            currentTextNode = child;
+                            index++;
+                        }
+                        else {
+                            currentTextNode.acceptChild(currentTextNode.textRun.length, child);
+                            model.removeChildAtIndex(index);
+                        }
+                    }
+                    else {
+                        currentTextNode = null;
+                        index++;
+                    }
+                }
+            }
+            Model.normalizeTextNodes = normalizeTextNodes;
             function isModelElementBefore(f, s) {
                 var first = f;
                 var second = s;
