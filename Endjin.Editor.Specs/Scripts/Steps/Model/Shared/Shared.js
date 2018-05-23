@@ -16,8 +16,8 @@
         this.models.set(name, newModel);
     });
     cucumber_1.When('I add {string} to {string}', function (name1, name2) {
-        var model1 = this.models.get(name1);
-        var model2 = this.models.get(name2);
+        var model1 = this.getNamedModel(name1);
+        var model2 = this.getNamedModel(name2);
         this.result = model2.acceptChild(0, model1);
     });
     cucumber_1.Then('the result should be null', function () {
@@ -27,14 +27,14 @@
         assert.ok(this.result instanceof Endjin.Editor.Model.Selection);
     });
     cucumber_1.Then('{string} should not contain {string}', function (name1, name2) {
-        var model1 = this.models.get(name1);
-        var model2 = this.models.get(name2);
+        var model1 = this.getNamedModel(name1);
+        var model2 = this.getNamedModel(name2);
         var i = model1.getIndex(model2);
         assert.strictEqual(i, -1);
     });
     cucumber_1.Then('{string} should contain {string}', function (name1, name2) {
-        var model1 = this.models.get(name1);
-        var model2 = this.models.get(name2);
+        var model1 = this.getNamedModel(name1);
+        var model2 = this.getNamedModel(name2);
         var i = model1.getIndex(model2);
         assert.notStrictEqual(i, -1);
     });
