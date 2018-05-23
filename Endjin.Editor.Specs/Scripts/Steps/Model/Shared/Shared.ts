@@ -21,7 +21,15 @@ Then('the result should be null', function (this: State): void {
 });
 
 Then('the result should be a Selection', function (this: State): void {
-    assert.ok(this.result instanceof Endjin.Editor.Model.Selection);
+    assert.notStrictEqual(this.result, null);
+});
+
+Then('the result Selection should start at position {int}', function (this: State, start: number) {
+    assert.strictEqual(this.result!.selectionStart.index, start);
+});
+
+Then('the result Selection should end at position {int}', function (this: State, end: number) {
+    assert.strictEqual(this.result!.selectionEnd.index, end);
 });
 
 Then('{string} should not contain {string}', function (this: State, name1: string, name2: string): void {

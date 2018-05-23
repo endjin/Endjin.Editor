@@ -16,4 +16,6 @@ Scenario: Adding an AnchorModel to a HeadingLevel1Model
 	And I have a model of type "AnchorModel" called "second"
 	When I add "second" to "first"
 	Then the result should be a Selection
+	And the result Selection should start at position 0
+	And the result Selection should end at position 1
 	And "first" should contain "second"

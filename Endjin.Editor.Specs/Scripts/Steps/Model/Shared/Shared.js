@@ -24,7 +24,13 @@
         assert.strictEqual(this.result, null);
     });
     cucumber_1.Then('the result should be a Selection', function () {
-        assert.ok(this.result instanceof Endjin.Editor.Model.Selection);
+        assert.notStrictEqual(this.result, null);
+    });
+    cucumber_1.Then('the result Selection should start at position {int}', function (start) {
+        assert.strictEqual(this.result.selectionStart.index, start);
+    });
+    cucumber_1.Then('the result Selection should end at position {int}', function (end) {
+        assert.strictEqual(this.result.selectionEnd.index, end);
     });
     cucumber_1.Then('{string} should not contain {string}', function (name1, name2) {
         var model1 = this.getNamedModel(name1);
