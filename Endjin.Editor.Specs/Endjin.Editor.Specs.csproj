@@ -113,10 +113,7 @@
     <None Update="node_modules\gherkin\test\stream\test_fr.feature">
       <Generator>None</Generator>
     </None>
-    <None Update="Scripts\Features\Model\Models\HeadingContent\HeadingLevel1Model\AcceptChild.feature">
-      <Generator>None</Generator>
-    </None>
-    <None Update="Scripts\Features\Model\Models\PhrasingContent\AnchorModel\AcceptChild.feature">
+    <None Update="Scripts\Features\Model\Models\AcceptChild.feature">
       <Generator>None</Generator>
     </None>
   </ItemGroup>
