@@ -4,4 +4,121 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Update="node_modules\gherkin\testdata\bad\inconsistent_cell_count.feature">
+      <Generator>None</Generator>
+    </None>
+    <None Update="node_modules\gherkin\testdata\bad\invalid_language.feature">
+      <Generator>None</Generator>
+    </None>
+    <None Update="node_modules\gherkin\testdata\bad\multiple_parser_errors.feature">
+      <Generator>None</Generator>
+    </None>
+    <None Update="node_modules\gherkin\testdata\bad\not_gherkin.feature">
+      <Generator>None</Generator>
+    </None>
+    <None Update="node_modules\gherkin\testdata\bad\single_parser_error.feature">
+      <Generator>None</Generator>
+    </None>
+    <None Update="node_modules\gherkin\testdata\bad\unexpected_eof.feature">
+      <Generator>None</Generator>
+    </None>
+    <None Update="node_modules\gherkin\testdata\good\background.feature">
+      <Generator>None</Generator>
+    </None>
+    <None Update="node_modules\gherkin\testdata\good\datatables.feature">
+      <Generator>None</Generator>
+    </None>
+    <None Update="node_modules\gherkin\testdata\good\descriptions.feature">
+      <Generator>None</Generator>
+    </None>
+    <None Update="node_modules\gherkin\testdata\good\docstrings.feature">
+      <Generator>None</Generator>
+    </None>
+    <None Update="node_modules\gherkin\testdata\good\empty.feature">
+      <Generator>None</Generator>
+    </None>
+    <None Update="node_modules\gherkin\testdata\good\escaped_pipes.feature">
+      <Generator>None</Generator>
+    </None>
+    <None Update="node_modules\gherkin\testdata\good\example_tokens_everywhere.feature">
+      <Generator>None</Generator>
+    </None>
+    <None Update="node_modules\gherkin\testdata\good\example_token_multiple.feature">
+      <Generator>None</Generator>
+    </None>
+    <None Update="node_modules\gherkin\testdata\good\i18n_emoji.feature">
+      <Generator>None</Generator>
+    </None>
+    <None Update="node_modules\gherkin\testdata\good\i18n_fr.feature">
+      <Generator>None</Generator>
+    </None>
+    <None Update="node_modules\gherkin\testdata\good\i18n_no.feature">
+      <Generator>None</Generator>
+    </None>
+    <None Update="node_modules\gherkin\testdata\good\incomplete_background_1.feature">
+      <Generator>None</Generator>
+    </None>
+    <None Update="node_modules\gherkin\testdata\good\incomplete_background_2.feature">
+      <Generator>None</Generator>
+    </None>
+    <None Update="node_modules\gherkin\testdata\good\incomplete_feature_1.feature">
+      <Generator>None</Generator>
+    </None>
+    <None Update="node_modules\gherkin\testdata\good\incomplete_feature_2.feature">
+      <Generator>None</Generator>
+    </None>
+    <None Update="node_modules\gherkin\testdata\good\incomplete_feature_3.feature">
+      <Generator>None</Generator>
+    </None>
+    <None Update="node_modules\gherkin\testdata\good\incomplete_scenario.feature">
+      <Generator>None</Generator>
+    </None>
+    <None Update="node_modules\gherkin\testdata\good\incomplete_scenario_outline.feature">
+      <Generator>None</Generator>
+    </None>
+    <None Update="node_modules\gherkin\testdata\good\language.feature">
+      <Generator>None</Generator>
+    </None>
+    <None Update="node_modules\gherkin\testdata\good\minimal.feature">
+      <Generator>None</Generator>
+    </None>
+    <None Update="node_modules\gherkin\testdata\good\readme_example.feature">
+      <Generator>None</Generator>
+    </None>
+    <None Update="node_modules\gherkin\testdata\good\scenario_outline.feature">
+      <Generator>None</Generator>
+    </None>
+    <None Update="node_modules\gherkin\testdata\good\scenario_outlines_with_tags.feature">
+      <Generator>None</Generator>
+    </None>
+    <None Update="node_modules\gherkin\testdata\good\scenario_outline_no_newline.feature">
+      <Generator>None</Generator>
+    </None>
+    <None Update="node_modules\gherkin\testdata\good\several_examples.feature">
+      <Generator>None</Generator>
+    </None>
+    <None Update="node_modules\gherkin\testdata\good\spaces_in_language.feature">
+      <Generator>None</Generator>
+    </None>
+    <None Update="node_modules\gherkin\testdata\good\tagged_feature_with_scenario_outline.feature">
+      <Generator>None</Generator>
+    </None>
+    <None Update="node_modules\gherkin\testdata\good\tags.feature">
+      <Generator>None</Generator>
+    </None>
+    <None Update="node_modules\gherkin\test\stream\test.feature">
+      <Generator>None</Generator>
+    </None>
+    <None Update="node_modules\gherkin\test\stream\test_fr.feature">
+      <Generator>None</Generator>
+    </None>
+    <None Update="Scripts\Features\Model\Models\HeadingContent\HeadingLevel1Model\AcceptChild.feature">
+      <Generator>None</Generator>
+    </None>
+    <None Update="Scripts\Features\Model\Models\PhrasingContent\AnchorModel\AcceptChild.feature">
+      <Generator>None</Generator>
+    </None>
+  </ItemGroup>
+
 </Project>
