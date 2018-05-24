@@ -21,9 +21,8 @@ namespace Endjin.Editor.Model {
                 return false;
             }
 
-            // TODO: validate we can execute the delete
-
-            return true;
+            let deleteSelection = moveSelectionToNextCharacter(this.selection.normalize().collapseToStart());
+            return deleteSelection.selectionScope.canRemoveSelection(deleteSelection);
         }
 
         execute(): IModel[] {
@@ -35,16 +34,33 @@ namespace Endjin.Editor.Model {
                 return [];
             }
 
-            let normalizedSelection = this.selection.normalize();
-
             let deletedModels: Array<IModel> = this.selection.selectionScope.removeSelection(this.selection);
             // We are actually done with these models, so tell the editor that.
             this.editor.destroyModels(...deletedModels);
 
-            this.editor.selection = normalizedSelection.collapseToStart();
+            let normalizedSelection = this.selection.normalize();
 
-            // TODO: actually execute the delete
-            return [this.selection.selectionScope];
+            let deleteSelection = moveSelectionToNextCharacter(this.selection.normalize().collapseToStart());
+
+            deletedModels = deleteSelection.selectionScope.removeSelection(deleteSelection);
+            // We are actually done with these models, so tell the editor that.
+            this.editor.destroyModels(...deletedModels);
+
+            let deleteTextModel = <TextModel>deleteSelection.selectionScope;
+            let currentParent = deleteTextModel.parent;
+            if (deleteTextModel.textRun.length === 0) {
+                removeChildFromParent(deleteTextModel);
+                while (currentParent !== null && currentParent.parent !== null && currentParent.childCount === 0) {
+                    let previousParent = currentParent;
+                    currentParent = previousParent.parent;
+                    removeChildFromParent(previousParent);
+                    this.editor.destroyModels(previousParent);
+                }
+                deleteSelection = moveSelectionToNextCharacter(deleteSelection);
+            }
+
+            this.editor.selection = deleteSelection.collapseToStart();
+            return [this.selection.selectionScope, deleteSelection.selectionScope, <IModel>currentParent];
         }
 
         undo(): IModel[] {

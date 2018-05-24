@@ -21,9 +21,8 @@ namespace Endjin.Editor.Model {
                 return false;
             }
 
-            // TODO: validate we can execute the backspace
-
-            return true;
+            let backspaceSelection = moveSelectionToPreviousCharacter(this.selection.normalize().collapseToStart());
+            return backspaceSelection.selectionScope.canRemoveSelection(backspaceSelection);
         }
 
         execute(): IModel[] {
@@ -35,17 +34,36 @@ namespace Endjin.Editor.Model {
                 return [];
             }
 
-            let normalizedSelection = this.selection.normalize();
-
             let deletedModels: Array<IModel> = this.selection.selectionScope.removeSelection(this.selection);
             // We are actually done with these models, so tell the editor that.
             this.editor.destroyModels(...deletedModels);
 
-            let collapsedSelection = normalizedSelection.collapseToStart();
+            let normalizedSelection = this.selection.normalize();
 
-            this.editor.selection = collapsedSelection;
-            
-            return [this.selection.selectionScope];
+            let backspaceSelection = moveSelectionToPreviousCharacter(this.selection.normalize().collapseToStart());
+
+            deletedModels = backspaceSelection.selectionScope.removeSelection(backspaceSelection);
+
+            // We are actually done with these models, so tell the editor that.
+            this.editor.destroyModels(...deletedModels);
+
+            let deleteTextModel = <TextModel>backspaceSelection.selectionScope;
+            let currentParent = deleteTextModel.parent;
+            if (deleteTextModel.textRun.length === 0) {
+                removeChildFromParent(deleteTextModel);
+                while (currentParent !== null && currentParent.parent !== null && currentParent.childCount === 0) {
+                    let previousParent = currentParent;
+                    currentParent = previousParent.parent;
+                    removeChildFromParent(previousParent);
+                    this.editor.destroyModels(previousParent);
+                }
+                backspaceSelection = moveSelectionToPreviousCharacter(backspaceSelection);
+            }
+
+
+            this.editor.selection = backspaceSelection.collapseToStart();
+
+            return [this.selection.selectionScope, backspaceSelection.selectionScope, <IModel>currentParent];
         }
 
         undo(): IModel[] {

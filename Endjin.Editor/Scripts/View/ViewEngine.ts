@@ -10,7 +10,7 @@ namespace Endjin.Editor.View {
         private modelToView: Map<string, Node>;
         private viewAdapters: Array<IViewAdapter>;
         private modelToViewEventHandlers: Map<string, Array<IViewEventHandler>>;
-        
+
         /**
          * Creates an instance of the ViewEngine
          */
@@ -273,6 +273,7 @@ namespace Endjin.Editor.View {
          * @param selection - the selection to set, or null to clear the selection
          */
         setSelection(selection: Model.Selection | null): boolean {
+            this.selectionTimeoutHandle = null;
             let sel = document.getSelection();
             sel.removeAllRanges();
             if (selection === null) {

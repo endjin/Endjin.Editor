@@ -227,10 +227,27 @@ var Endjin;
                 __extends(TextModel, _super);
                 function TextModel(textRun) {
                     var _this = _super.call(this) || this;
-                    _this.textRun = textRun;
                     _this.acceptsTypes = [TextModel.ContentType];
+                    _this.textRun = _this.normalizeValue(textRun);
                     return _this;
                 }
+                Object.defineProperty(TextModel.prototype, "textRun", {
+                    get: function () {
+                        return this._textRun;
+                    },
+                    set: function (value) {
+                        this._textRun = value;
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(TextModel.prototype, "normalizedTextRun", {
+                    get: function () {
+                        return this.normalizeValue(this.textRun);
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
                 Object.defineProperty(TextModel.prototype, "contentType", {
                     get: function () {
                         return TextModel.ContentType;
@@ -239,19 +256,14 @@ var Endjin;
                     configurable: true
                 });
                 TextModel.prototype.canRemoveRange = function (startIndex, endIndex) {
-                    if (startIndex < 0 || startIndex > this.textRun.length - 1 ||
-                        endIndex < 0 || endIndex > this.textRun.length - 1 ||
-                        startIndex > endIndex) {
-                        return false;
-                    }
                     return true;
                 };
                 TextModel.prototype.removeRange = function (startIndex, endIndex) {
-                    if (!this.canRemoveRange(startIndex, endIndex)) {
+                    if (startIndex > endIndex || startIndex === this.textRun.length) {
                         return [];
                     }
-                    var removedRun = this.textRun.substring(startIndex, endIndex);
-                    this.textRun = (startIndex > 0 ? this.textRun.substring(0, startIndex) : "") + (endIndex < this.textRun.length - 1 ? this.textRun.substring(endIndex + 1) : "");
+                    var removedRun = this.textRun.substring(startIndex, endIndex + 1);
+                    this.textRun = (startIndex > 0 ? this.normalizeValue(this.textRun.substring(0, startIndex), true, false) : "") + (endIndex < this.textRun.length - 1 ? this.normalizeValue(this.textRun.substring(endIndex + 1), false, true) : "");
                     return [new TextModel(removedRun)];
                 };
                 TextModel.prototype.canAccept = function (index, child) {
@@ -262,8 +274,8 @@ var Endjin;
                         return null;
                     }
                     var model = child;
-                    this.textRun = this.textRun.slice(0, index) + model.textRun + this.textRun.slice(index);
-                    return new Model.Selection(this, new Model.Location(this, index), new Model.Location(this, index + model.textRun.length));
+                    this.textRun = this.textRun.slice(0, index) + model.normalizedTextRun + this.textRun.slice(index);
+                    return new Model.Selection(this, new Model.Location(this, index), new Model.Location(this, index + model.normalizedTextRun.length));
                 };
                 TextModel.prototype.canRemoveSelection = function (selection) {
                     var normalizedSelection = selection.normalize();
@@ -276,6 +288,39 @@ var Endjin;
                     var startIndex = normalizedSelection.selectionStart.model === this ? normalizedSelection.selectionStart.index : 0;
                     var endIndex = normalizedSelection.selectionEnd.model === this ? normalizedSelection.selectionEnd.index : this.textRun.length;
                     return this.removeRange(startIndex, endIndex - 1);
+                };
+                TextModel.prototype.trimWhitespace = function (value) {
+                    value = value.trim();
+                    if (value[0] === String.fromCharCode(160)) {
+                        value = value.substr(1);
+                    }
+                    if (value[value.length - 1] === String.fromCharCode(160)) {
+                        value = value.substr(0, value.length - 1);
+                    }
+                    value = value.trim();
+                    return value;
+                };
+                TextModel.prototype.normalizeValue = function (value, useNbspAtStart, useNbspAtEnd) {
+                    if (useNbspAtStart === void 0) { useNbspAtStart = false; }
+                    if (useNbspAtEnd === void 0) { useNbspAtEnd = false; }
+                    if (value.length === 0) {
+                        return value;
+                    }
+                    var startsWithWhitespace = /^[\s\u00A0]/.test(value);
+                    var endsWithWhitespace = /[\s\u00A0]$/.test(value);
+                    var padCharStart = useNbspAtStart ? String.fromCharCode(160) : " ";
+                    var padCharEnd = useNbspAtEnd ? String.fromCharCode(160) : " ";
+                    value = this.trimWhitespace(value);
+                    if (value.length === 0) {
+                        return padCharStart;
+                    }
+                    if (startsWithWhitespace) {
+                        value = padCharStart + value;
+                    }
+                    if (endsWithWhitespace) {
+                        value = value + padCharEnd;
+                    }
+                    return value;
                 };
                 TextModel.ContentType = Model.CommonModelTypes.PhrasingContent + ".text";
                 return TextModel;
@@ -462,6 +507,7 @@ var Endjin;
                     return new Editor.Model.Selection(selectionScope, new Editor.Model.Location(startModel, range.startOffset), new Editor.Model.Location(endModel, range.endOffset));
                 };
                 ViewEngine.prototype.setSelection = function (selection) {
+                    this.selectionTimeoutHandle = null;
                     var sel = document.getSelection();
                     sel.removeAllRanges();
                     if (selection === null) {
@@ -826,12 +872,12 @@ var Endjin;
                     var startIndex = normalizedSelection.selectionStart.index;
                     var endIndex = normalizedSelection.selectionEnd.index;
                     if (startTextModel === endTextModel) {
-                        return startTextModel.canRemoveRange(startIndex, endIndex);
+                        return startTextModel.canRemoveRange(startIndex, endIndex - 1);
                     }
                     if (!startTextModel.canRemoveRange(startIndex, startTextModel.textRun.length - 1)) {
                         return false;
                     }
-                    if (!endTextModel.canRemoveRange(0, endIndex)) {
+                    if (!endTextModel.canRemoveRange(0, endIndex - 1)) {
                         return false;
                     }
                     return true;
@@ -849,7 +895,7 @@ var Endjin;
                     var startTextModelParent = startTextModel.parent;
                     var endTextModelParent = endTextModel.parent;
                     if (startTextModel === endTextModel) {
-                        startTextModel.removeRange(startIndex, endIndex);
+                        startTextModel.removeRange(startIndex, endIndex - 1);
                     }
                     else {
                         removedModels.push.apply(removedModels, startTextModel.removeRange(startIndex, startTextModel.textRun.length - 1));
@@ -883,6 +929,10 @@ var Endjin;
                             removedModels.push(currentCandidate);
                             Model.removeChildFromParent(currentCandidate);
                         }
+                    }
+                    if (startTextModel.textRun.length === 0) {
+                        Model.removeChildFromParent(startTextModel);
+                        removedModels.push(startTextModel);
                     }
                     return removedModels;
                 };
@@ -3779,33 +3829,6 @@ var Endjin;
             }(View.ViewAdapterBase));
             View.AreaAdapter = AreaAdapter;
         })(View = Editor.View || (Editor.View = {}));
-    })(Editor = Endjin.Editor || (Endjin.Editor = {}));
-})(Endjin || (Endjin = {}));
-var Endjin;
-(function (Endjin) {
-    var Editor;
-    (function (Editor) {
-        var Model;
-        (function (Model) {
-            var BidirectionalIsolationModel = (function (_super) {
-                __extends(BidirectionalIsolationModel, _super);
-                function BidirectionalIsolationModel() {
-                    var _this = _super !== null && _super.apply(this, arguments) || this;
-                    _this.acceptsTypes = [Model.CommonModelTypes.PhrasingContent];
-                    return _this;
-                }
-                Object.defineProperty(BidirectionalIsolationModel.prototype, "contentType", {
-                    get: function () {
-                        return BidirectionalIsolationModel.ContentType;
-                    },
-                    enumerable: true,
-                    configurable: true
-                });
-                BidirectionalIsolationModel.ContentType = Model.CommonModelTypes.PhrasingContent + ".bidirectionalisolation";
-                return BidirectionalIsolationModel;
-            }(Model.ChildContentModelBase));
-            Model.BidirectionalIsolationModel = BidirectionalIsolationModel;
-        })(Model = Editor.Model || (Editor.Model = {}));
     })(Editor = Endjin.Editor || (Endjin.Editor = {}));
 })(Endjin || (Endjin = {}));
 var Endjin;
@@ -8149,7 +8172,8 @@ var Endjin;
                     if (!this.selection.selectionScope.canRemoveSelection(this.selection)) {
                         return false;
                     }
-                    return true;
+                    var backspaceSelection = Model.moveSelectionToPreviousCharacter(this.selection.normalize().collapseToStart());
+                    return backspaceSelection.selectionScope.canRemoveSelection(backspaceSelection);
                 };
                 BackspaceCommand.prototype.execute = function () {
                     if (!this.canExecute()) {
@@ -8158,13 +8182,27 @@ var Endjin;
                     if (this.selection === null) {
                         return [];
                     }
-                    var normalizedSelection = this.selection.normalize();
                     var deletedModels = this.selection.selectionScope.removeSelection(this.selection);
                     (_a = this.editor).destroyModels.apply(_a, deletedModels);
-                    var collapsedSelection = normalizedSelection.collapseToStart();
-                    this.editor.selection = collapsedSelection;
-                    return [this.selection.selectionScope];
-                    var _a;
+                    var normalizedSelection = this.selection.normalize();
+                    var backspaceSelection = Model.moveSelectionToPreviousCharacter(this.selection.normalize().collapseToStart());
+                    deletedModels = backspaceSelection.selectionScope.removeSelection(backspaceSelection);
+                    (_b = this.editor).destroyModels.apply(_b, deletedModels);
+                    var deleteTextModel = backspaceSelection.selectionScope;
+                    var currentParent = deleteTextModel.parent;
+                    if (deleteTextModel.textRun.length === 0) {
+                        Model.removeChildFromParent(deleteTextModel);
+                        while (currentParent !== null && currentParent.parent !== null && currentParent.childCount === 0) {
+                            var previousParent = currentParent;
+                            currentParent = previousParent.parent;
+                            Model.removeChildFromParent(previousParent);
+                            this.editor.destroyModels(previousParent);
+                        }
+                        backspaceSelection = Model.moveSelectionToPreviousCharacter(backspaceSelection);
+                    }
+                    this.editor.selection = backspaceSelection.collapseToStart();
+                    return [this.selection.selectionScope, backspaceSelection.selectionScope, currentParent];
+                    var _a, _b;
                 };
                 BackspaceCommand.prototype.undo = function () {
                     return [];
@@ -8236,7 +8274,8 @@ var Endjin;
                     if (!this.selection.selectionScope.canRemoveSelection(this.selection)) {
                         return false;
                     }
-                    return true;
+                    var deleteSelection = Model.moveSelectionToNextCharacter(this.selection.normalize().collapseToStart());
+                    return deleteSelection.selectionScope.canRemoveSelection(deleteSelection);
                 };
                 DeleteCommand.prototype.execute = function () {
                     if (!this.canExecute()) {
@@ -8245,12 +8284,27 @@ var Endjin;
                     if (this.selection === null) {
                         return [];
                     }
-                    var normalizedSelection = this.selection.normalize();
                     var deletedModels = this.selection.selectionScope.removeSelection(this.selection);
                     (_a = this.editor).destroyModels.apply(_a, deletedModels);
-                    this.editor.selection = normalizedSelection.collapseToStart();
-                    return [this.selection.selectionScope];
-                    var _a;
+                    var normalizedSelection = this.selection.normalize();
+                    var deleteSelection = Model.moveSelectionToNextCharacter(this.selection.normalize().collapseToStart());
+                    deletedModels = deleteSelection.selectionScope.removeSelection(deleteSelection);
+                    (_b = this.editor).destroyModels.apply(_b, deletedModels);
+                    var deleteTextModel = deleteSelection.selectionScope;
+                    var currentParent = deleteTextModel.parent;
+                    if (deleteTextModel.textRun.length === 0) {
+                        Model.removeChildFromParent(deleteTextModel);
+                        while (currentParent !== null && currentParent.parent !== null && currentParent.childCount === 0) {
+                            var previousParent = currentParent;
+                            currentParent = previousParent.parent;
+                            Model.removeChildFromParent(previousParent);
+                            this.editor.destroyModels(previousParent);
+                        }
+                        deleteSelection = Model.moveSelectionToNextCharacter(deleteSelection);
+                    }
+                    this.editor.selection = deleteSelection.collapseToStart();
+                    return [this.selection.selectionScope, deleteSelection.selectionScope, currentParent];
+                    var _a, _b;
                 };
                 DeleteCommand.prototype.undo = function () {
                     return [];
@@ -8600,6 +8654,39 @@ var Endjin;
     (function (Editor) {
         var Model;
         (function (Model) {
+            function moveSelectionToPreviousCharacter(selection) {
+                if (selection.selectionStart.index > 0) {
+                    return new Model.Selection(selection.selectionScope, new Model.Location(selection.selectionStart.model, selection.selectionStart.index - 1), selection.selectionEnd);
+                }
+                var current = getPreviousModel(selection.selectionStart.model);
+                while (current !== null && current.contentType !== Model.TextModel.ContentType) {
+                    current = getPreviousModel(current);
+                }
+                if (current !== null) {
+                    var textModel = current;
+                    return new Model.Selection(textModel, new Model.Location(textModel, textModel.textRun.length - 1), new Model.Location(textModel, textModel.textRun.length));
+                }
+                return selection;
+            }
+            Model.moveSelectionToPreviousCharacter = moveSelectionToPreviousCharacter;
+            function moveSelectionToNextCharacter(selection) {
+                if (selection.selectionEnd.model.contentType !== Model.TextModel.ContentType) {
+                    return selection;
+                }
+                var endTextModel = selection.selectionEnd.model;
+                if (selection.selectionEnd.index < endTextModel.textRun.length) {
+                    return new Model.Selection(endTextModel, new Model.Location(endTextModel, selection.selectionEnd.index), new Model.Location(endTextModel, selection.selectionEnd.index + 1));
+                }
+                var current = getNextModel(endTextModel);
+                while (current !== null && current.contentType !== Model.TextModel.ContentType) {
+                    current = getNextModel(current);
+                }
+                if (current !== null) {
+                    return new Model.Selection(current, new Model.Location(current, 0), new Model.Location(current, 1));
+                }
+                return selection;
+            }
+            Model.moveSelectionToNextCharacter = moveSelectionToNextCharacter;
             function normalizeTextNodes(model) {
                 var index = 0;
                 var currentTextNode = null;
@@ -8824,6 +8911,33 @@ var Endjin;
                 return Keychord;
             }());
             Model.Keychord = Keychord;
+        })(Model = Editor.Model || (Editor.Model = {}));
+    })(Editor = Endjin.Editor || (Endjin.Editor = {}));
+})(Endjin || (Endjin = {}));
+var Endjin;
+(function (Endjin) {
+    var Editor;
+    (function (Editor) {
+        var Model;
+        (function (Model) {
+            var BidirectionalIsolationModel = (function (_super) {
+                __extends(BidirectionalIsolationModel, _super);
+                function BidirectionalIsolationModel() {
+                    var _this = _super !== null && _super.apply(this, arguments) || this;
+                    _this.acceptsTypes = [Model.CommonModelTypes.PhrasingContent];
+                    return _this;
+                }
+                Object.defineProperty(BidirectionalIsolationModel.prototype, "contentType", {
+                    get: function () {
+                        return BidirectionalIsolationModel.ContentType;
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
+                BidirectionalIsolationModel.ContentType = Model.CommonModelTypes.PhrasingContent + ".bidirectionalisolation";
+                return BidirectionalIsolationModel;
+            }(Model.ChildContentModelBase));
+            Model.BidirectionalIsolationModel = BidirectionalIsolationModel;
         })(Model = Editor.Model || (Editor.Model = {}));
     })(Editor = Endjin.Editor || (Endjin.Editor = {}));
 })(Endjin || (Endjin = {}));

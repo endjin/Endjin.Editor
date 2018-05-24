@@ -5,6 +5,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Update="Scripts\Features\Model\Models\AcceptChild.feature.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>AcceptChild.feature</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="node_modules\gherkin\testdata\bad\inconsistent_cell_count.feature">
       <Generator>None</Generator>
     </None>
@@ -112,6 +120,10 @@
     </None>
     <None Update="node_modules\gherkin\test\stream\test_fr.feature">
       <Generator>None</Generator>
+    </None>
+    <None Update="Scripts\Features\Model\Models\AcceptChild.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>AcceptChild.feature.cs</LastGenOutput>
     </None>
     <None Update="Scripts\Features\Model\Models\HeadingContent\HeadingLevel1Model\AcceptChild.feature">
       <Generator>None</Generator>

@@ -113,10 +113,12 @@ declare namespace Endjin.Editor.Model {
 }
 declare namespace Endjin.Editor.Model {
     class TextModel extends EmptyContentModelBase implements IModel {
-        textRun: string;
         static readonly ContentType: string;
+        private _textRun;
         readonly acceptsTypes: Array<string>;
         constructor(textRun: string);
+        textRun: string;
+        readonly normalizedTextRun: string;
         readonly contentType: string;
         canRemoveRange(startIndex: number, endIndex: number): boolean;
         removeRange(startIndex: number, endIndex: number): Array<IModel>;
@@ -124,6 +126,8 @@ declare namespace Endjin.Editor.Model {
         acceptChild(index: number, child: IModel): Selection | null;
         canRemoveSelection(selection: Selection): boolean;
         removeSelection(selection: Selection): Array<IModel>;
+        private trimWhitespace(value);
+        private normalizeValue(value, useNbspAtStart?, useNbspAtEnd?);
     }
 }
 declare namespace Endjin.Editor.View {
@@ -1095,13 +1099,6 @@ declare namespace Endjin.Editor.View {
         protected createModelInstance(): Model.AreaModel;
         protected applyCustomAttributes(model: Model.AreaModel, view: HTMLAreaElement): void;
         protected parseCustomAttributes(model: Model.AreaModel, view: HTMLAreaElement): void;
-    }
-}
-declare namespace Endjin.Editor.Model {
-    class BidirectionalIsolationModel extends ChildContentModelBase {
-        static readonly ContentType: string;
-        readonly contentType: string;
-        readonly acceptsTypes: string[];
     }
 }
 declare namespace Endjin.Editor.View {
@@ -2326,6 +2323,8 @@ declare namespace Endjin.Editor {
     function getEditorFor(element: HTMLElement): IEditor | null;
 }
 declare namespace Endjin.Editor.Model {
+    function moveSelectionToPreviousCharacter(selection: Selection): Selection;
+    function moveSelectionToNextCharacter(selection: Selection): Selection;
     function normalizeTextNodes(model: IModel): void;
     function isModelElementBefore(f: IModel, s: IModel): boolean;
     function getNextModel(model: IModel): IModel | null;
@@ -2359,6 +2358,13 @@ declare namespace Endjin.Editor.Model {
         second: Keypress | null;
         constructor(first: Keypress, second?: Keypress | null);
         equals(other: Keychord): boolean;
+    }
+}
+declare namespace Endjin.Editor.Model {
+    class BidirectionalIsolationModel extends ChildContentModelBase {
+        static readonly ContentType: string;
+        readonly contentType: string;
+        readonly acceptsTypes: string[];
     }
 }
 declare namespace Endjin.Editor.Model {

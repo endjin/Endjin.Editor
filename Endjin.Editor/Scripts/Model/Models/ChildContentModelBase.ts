@@ -135,7 +135,7 @@ namespace Endjin.Editor.Model {
             let endIndex = normalizedSelection.selectionEnd.index;
 
             if (startTextModel === endTextModel) {
-                return startTextModel.canRemoveRange(startIndex, endIndex);
+                return startTextModel.canRemoveRange(startIndex, endIndex - 1);
             }
 
             // Can we delete the range in the start model
@@ -144,7 +144,7 @@ namespace Endjin.Editor.Model {
             }
 
             // Can we delete the range in the end model
-            if (!endTextModel.canRemoveRange(0, endIndex)) {
+            if (!endTextModel.canRemoveRange(0, endIndex - 1)) {
                 return false;
             }
 
@@ -170,7 +170,7 @@ namespace Endjin.Editor.Model {
             let endTextModelParent = <IModel>endTextModel.parent;
 
             if (startTextModel === endTextModel) {
-                startTextModel.removeRange(startIndex, endIndex);
+                startTextModel.removeRange(startIndex, endIndex - 1);                
             } else {
                 // Delete the range in the start model
                 removedModels.push(...startTextModel.removeRange(startIndex, startTextModel.textRun.length - 1));
@@ -216,6 +216,11 @@ namespace Endjin.Editor.Model {
                     removedModels.push(currentCandidate);
                     removeChildFromParent(currentCandidate);
                 }
+            }
+
+            if (startTextModel.textRun.length === 0) {
+                removeChildFromParent(startTextModel);
+                removedModels.push(startTextModel);
             }
 
             return removedModels;

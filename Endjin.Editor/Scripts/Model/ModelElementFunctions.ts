@@ -1,6 +1,48 @@
 ﻿/// <reference path="IModel.ts" />
 
 namespace Endjin.Editor.Model {
+
+    export function moveSelectionToPreviousCharacter(selection: Selection): Selection {
+        if (selection.selectionStart.index > 0) {
+            return new Selection(selection.selectionScope, new Location(selection.selectionStart.model, selection.selectionStart.index - 1), selection.selectionEnd);
+        }
+
+        let current: IModel | null = getPreviousModel(selection.selectionStart.model);
+        while (current !== null && current.contentType !== TextModel.ContentType) {
+            current = getPreviousModel(current);
+        }
+
+        if (current !== null) {
+            let textModel = <TextModel>current;
+            return new Selection(textModel, new Location(textModel, textModel.textRun.length - 1), new Location(textModel, textModel.textRun.length));
+        }
+
+        return selection;        
+    }
+
+    export function moveSelectionToNextCharacter(selection: Selection): Selection {
+        if (selection.selectionEnd.model.contentType !== TextModel.ContentType) {
+            return selection;
+        }
+
+        let endTextModel = <TextModel>selection.selectionEnd.model;
+
+        if (selection.selectionEnd.index < endTextModel.textRun.length) {
+            return new Selection(endTextModel, new Location(endTextModel, selection.selectionEnd.index), new Location(endTextModel, selection.selectionEnd.index + 1));
+        }
+
+        let current: IModel | null = getNextModel(endTextModel);
+        while (current !== null && current.contentType !== TextModel.ContentType) {
+            current = getNextModel(current);
+        }
+
+        if (current !== null) {
+            return new Selection(current, new Location(current, 0), new Location(current, 1),);
+        }
+
+        return selection;
+    }
+
     export function normalizeTextNodes(model: IModel): void {
         let index = 0;
         let currentTextNode: TextModel | null = null;
