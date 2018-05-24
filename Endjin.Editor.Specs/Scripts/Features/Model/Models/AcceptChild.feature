@@ -33,4 +33,39 @@ Scenario Outline: Adding invalid children to a model
 	Examples: 
 	| Parent        | Child         |
 	| HeadingLevel1 | HeadingLevel1 |
+	| HeadingLevel1 | HeadingLevel2 |
+	| HeadingLevel1 | HeadingLevel3 |
+	| HeadingLevel1 | HeadingLevel4 |
+	| HeadingLevel1 | HeadingLevel5 |
+	| HeadingLevel1 | HeadingLevel6 |
+	| HeadingLevel2 | HeadingLevel1 |
+	| HeadingLevel2 | HeadingLevel2 |
+	| HeadingLevel2 | HeadingLevel3 |
+	| HeadingLevel2 | HeadingLevel4 |
+	| HeadingLevel2 | HeadingLevel5 |
+	| HeadingLevel2 | HeadingLevel6 |
+	| HeadingLevel3 | HeadingLevel1 |
+	| HeadingLevel3 | HeadingLevel2 |
+	| HeadingLevel3 | HeadingLevel3 |
+	| HeadingLevel3 | HeadingLevel4 |
+	| HeadingLevel3 | HeadingLevel5 |
+	| HeadingLevel3 | HeadingLevel6 |
+	| HeadingLevel4 | HeadingLevel1 |
+	| HeadingLevel4 | HeadingLevel2 |
+	| HeadingLevel4 | HeadingLevel3 |
+	| HeadingLevel4 | HeadingLevel4 |
+	| HeadingLevel4 | HeadingLevel5 |
+	| HeadingLevel4 | HeadingLevel6 |
+	| HeadingLevel5 | HeadingLevel1 |
+	| HeadingLevel5 | HeadingLevel2 |
+	| HeadingLevel5 | HeadingLevel3 |
+	| HeadingLevel5 | HeadingLevel4 |
+	| HeadingLevel5 | HeadingLevel5 |
+	| HeadingLevel5 | HeadingLevel6 |
+	| HeadingLevel6 | HeadingLevel1 |
+	| HeadingLevel6 | HeadingLevel2 |
+	| HeadingLevel6 | HeadingLevel3 |
+	| HeadingLevel6 | HeadingLevel4 |
+	| HeadingLevel6 | HeadingLevel5 |
+	| HeadingLevel6 | HeadingLevel6 |
 	| Anchor        | Anchor        |
