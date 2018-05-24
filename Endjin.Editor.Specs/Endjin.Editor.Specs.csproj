@@ -122,13 +122,6 @@
       <Generator>None</Generator>
     </None>
     <None Update="Scripts\Features\Model\Models\AcceptChild.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
-      <LastGenOutput>AcceptChild.feature.cs</LastGenOutput>
-    </None>
-    <None Update="Scripts\Features\Model\Models\HeadingContent\HeadingLevel1Model\AcceptChild.feature">
-      <Generator>None</Generator>
-    </None>
-    <None Update="Scripts\Features\Model\Models\PhrasingContent\AnchorModel\AcceptChild.feature">
       <Generator>None</Generator>
     </None>
   </ItemGroup>
